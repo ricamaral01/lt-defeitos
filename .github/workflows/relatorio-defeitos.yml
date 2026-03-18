@@ -3,11 +3,20 @@ name: Relatorio Defeitos LT-PRO
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 10 * * *"
+    # GitHub cron usa UTC. 23:00 BRT (UTC-3) = 02:00 UTC no dia seguinte.
+    - cron: "0 2 * * *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   gerar-relatorio:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     defaults:
       run:
         shell: bash
@@ -35,6 +44,13 @@ jobs:
         run: |
           python analise_comparativa_defeitos_LT-PRO_2026.py
 
+      - name: Prepare Pages content
+        run: |
+          mkdir -p public
+          latest_file=$(ls -t relatorio_comparativo_*.html | head -n 1)
+          cp "$latest_file" public/index.html
+          cp "$latest_file" "public/$latest_file"
+
       - name: Upload generated reports
         uses: actions/upload-artifact@v4
         with:
@@ -42,3 +58,15 @@ jobs:
           path: |
             relatorio_comparativo_*.html
           if-no-files-found: error
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
