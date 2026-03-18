@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Local credentials and secrets
+Credenciais/
+*.json
+
+# OS
+.desktop.ini
+desktop.ini
+
+# Generated reports (optional: keep local only)
+# relatorio_comparativo_*.html
