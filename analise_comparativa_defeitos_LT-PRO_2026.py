@@ -14,6 +14,8 @@ import html as html_module
 import sys
 import time
 import json
+import re
+import unicodedata
 
 # ─── Configurações ───────────────────────────────────────────────────────────
 
@@ -21,8 +23,102 @@ CREDENTIALS_PATH = os.getenv(
     "GOOGLE_CREDENTIALS_PATH",
     r"G:\Outros computadores\Meu laptop\Concrefer\Relatórios Automatizados\Credenciais\sheetsautomacao-477114-9b74d04e460f.json",
 )
-SPREADSHEET_ID = os.getenv("SPREADSHEET_ID_PRODUCAO", "18Rgr2fWCSrc2NUzgxE9YDO8_LoXhMRxFSNb-jhB_kHU")  # Planilha com dados de produção
-SPREADSHEET_ID_DEFEITOS = os.getenv("SPREADSHEET_ID_DEFEITOS", "1OCcDhYan81sNRgrjycYtY6E6tewbRvcCVOPUp6GsQC4")  # Planilha com dados de defeitos
+# Planilha de produção de abril / meses atuais
+# Use SPREADSHEET_URL_PRODUCAO ou SPREADSHEET_ID_PRODUCAO para alterar a fonte de dados de produção
+SPREADSHEET_URL_PRODUCAO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO",
+    "https://docs.google.com/spreadsheets/d/17YhN6mte3bA4cGaU1mJjh3i6OLndKcBaJjgKzqWLsVQ/edit?gid=1432074850",
+)
+# Planilha específica de produção de março
+# Use SPREADSHEET_URL_PRODUCAO_MARCO ou SPREADSHEET_ID_PRODUCAO_MARCO
+SPREADSHEET_URL_PRODUCAO_MARCO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_MARCO",
+    "https://docs.google.com/spreadsheets/d/18Rgr2fWCSrc2NUzgxE9YDO8_LoXhMRxFSNb-jhB_kHU/edit?gid=1432074850",
+)
+# Planilha específica de produção de maio
+# Use SPREADSHEET_URL_PRODUCAO_MAIO ou SPREADSHEET_ID_PRODUCAO_MAIO
+SPREADSHEET_URL_PRODUCAO_MAIO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_MAIO",
+    "https://docs.google.com/spreadsheets/d/11BTzfxzzgYCT2Ig49p9WbDcSoz7p68mOUhUiHPclwpU/edit?gid=1549375122#gid=1549375122",
+)
+# Planilha específica de produção de junho
+# Use SPREADSHEET_URL_PRODUCAO_JUNHO ou SPREADSHEET_ID_PRODUCAO_JUNHO
+SPREADSHEET_URL_PRODUCAO_JUNHO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_JUNHO",
+    "https://docs.google.com/spreadsheets/d/18SzLHop5OLcOaysniCqtnG3s13ABP8uTUzIRVkoOj4s/edit?gid=168542555",
+)
+# Planilha especifica de producao de julho
+# Use SPREADSHEET_URL_PRODUCAO_JULHO ou SPREADSHEET_ID_PRODUCAO_JULHO
+SPREADSHEET_URL_PRODUCAO_JULHO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_JULHO",
+    "https://docs.google.com/spreadsheets/d/1nEqNCdk-LoCq8lNeA5t02W3AJIvyfhtX0IeWSYHYEgY/edit?gid=1432074850#gid=1432074850",
+)
+# Planilha especifica de producao de agosto
+# Use SPREADSHEET_URL_PRODUCAO_AGOSTO ou SPREADSHEET_ID_PRODUCAO_AGOSTO
+SPREADSHEET_URL_PRODUCAO_AGOSTO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_AGOSTO",
+    "https://docs.google.com/spreadsheets/d/1eq5GNZpN_aEU0xAK-bWInmAJvFzzD-4x_PLWzytbPT8/edit?gid=1432074850#gid=1432074850",
+)
+# Planilha especifica de producao de setembro
+# Use SPREADSHEET_URL_PRODUCAO_SETEMBRO ou SPREADSHEET_ID_PRODUCAO_SETEMBRO
+SPREADSHEET_URL_PRODUCAO_SETEMBRO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_SETEMBRO",
+    "https://docs.google.com/spreadsheets/d/18OwJ1bUK1xvr1WG-epDChi5na7FD2MMdsEgeJgBTpRA/edit?gid=1549375122#gid=1549375122",
+)
+# Planilha especifica de producao de outubro
+# Use SPREADSHEET_URL_PRODUCAO_OUTUBRO ou SPREADSHEET_ID_PRODUCAO_OUTUBRO
+SPREADSHEET_URL_PRODUCAO_OUTUBRO = os.getenv(
+    "SPREADSHEET_URL_PRODUCAO_OUTUBRO",
+    "https://docs.google.com/spreadsheets/d/17KBJUSCwfZhyqYGik0WHTX86bRxcqZqFHWZLo_w8ERM/edit?gid=1385950632#gid=1385950632",
+)
+SPREADSHEET_ID = os.getenv("SPREADSHEET_ID_PRODUCAO", "")
+if not SPREADSHEET_ID:
+    match = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO)
+    SPREADSHEET_ID = match.group(1) if match else ""
+SPREADSHEET_ID_MARCO = os.getenv("SPREADSHEET_ID_PRODUCAO_MARCO", "")
+if not SPREADSHEET_ID_MARCO:
+    match_marco = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_MARCO)
+    SPREADSHEET_ID_MARCO = match_marco.group(1) if match_marco else ""
+SPREADSHEET_ID_MAIO = os.getenv("SPREADSHEET_ID_PRODUCAO_MAIO", "")
+if not SPREADSHEET_ID_MAIO:
+    match_maio = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_MAIO)
+    SPREADSHEET_ID_MAIO = match_maio.group(1) if match_maio else ""
+SPREADSHEET_ID_JUNHO = os.getenv("SPREADSHEET_ID_PRODUCAO_JUNHO", "")
+if not SPREADSHEET_ID_JUNHO:
+    match_junho = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_JUNHO)
+    SPREADSHEET_ID_JUNHO = match_junho.group(1) if match_junho else ""
+SPREADSHEET_ID_JULHO = os.getenv("SPREADSHEET_ID_PRODUCAO_JULHO", "")
+if not SPREADSHEET_ID_JULHO:
+    match_julho = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_JULHO)
+    SPREADSHEET_ID_JULHO = match_julho.group(1) if match_julho else ""
+SPREADSHEET_ID_AGOSTO = os.getenv("SPREADSHEET_ID_PRODUCAO_AGOSTO", "")
+if not SPREADSHEET_ID_AGOSTO:
+    match_agosto = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_AGOSTO)
+    SPREADSHEET_ID_AGOSTO = match_agosto.group(1) if match_agosto else ""
+SPREADSHEET_ID_SETEMBRO = os.getenv("SPREADSHEET_ID_PRODUCAO_SETEMBRO", "")
+if not SPREADSHEET_ID_SETEMBRO:
+    match_setembro = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_SETEMBRO)
+    SPREADSHEET_ID_SETEMBRO = match_setembro.group(1) if match_setembro else ""
+SPREADSHEET_ID_OUTUBRO = os.getenv("SPREADSHEET_ID_PRODUCAO_OUTUBRO", "")
+if not SPREADSHEET_ID_OUTUBRO:
+    match_outubro = re.search(r"/d/([a-zA-Z0-9_-]+)", SPREADSHEET_URL_PRODUCAO_OUTUBRO)
+    SPREADSHEET_ID_OUTUBRO = match_outubro.group(1) if match_outubro else ""
+if not SPREADSHEET_ID:
+    raise ValueError(
+        "SPREADSHEET_ID_PRODUCAO ou SPREADSHEET_URL_PRODUCAO deve ser definido."
+    )
+if not SPREADSHEET_ID_MARCO:
+    raise ValueError(
+        "SPREADSHEET_ID_PRODUCAO_MARCO ou SPREADSHEET_URL_PRODUCAO_MARCO deve ser definido."
+    )
+if not SPREADSHEET_ID_MAIO:
+    raise ValueError(
+        "SPREADSHEET_ID_PRODUCAO_MAIO ou SPREADSHEET_URL_PRODUCAO_MAIO deve ser definido."
+    )
+SPREADSHEET_ID_DEFEITOS = os.getenv(
+    "SPREADSHEET_ID_DEFEITOS",
+    "1OCcDhYan81sNRgrjycYtY6E6tewbRvcCVOPUp6GsQC4",
+)  # Planilha com dados de defeitos
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))  # Mesma pasta do arquivo .py
 
 SCOPES = [
@@ -61,6 +157,21 @@ MESES_2026 = [
     ("nov26", "Nov/26"),
     ("dez26", "Dez/26"),
 ]
+
+MESES_SIGLA = {
+    "jan": 1,
+    "fev": 2,
+    "mar": 3,
+    "abr": 4,
+    "mai": 5,
+    "jun": 6,
+    "jul": 7,
+    "ago": 8,
+    "set": 9,
+    "out": 10,
+    "nov": 11,
+    "dez": 12,
+}
 
 # ─── Produção por Setor por Mês ──────────────────────────────────────────────
 # Para cada mês, cole os dados de produção no formato:
@@ -102,6 +213,47 @@ def ler_producao_sheets(creds, spreadsheet_id, aba_nome, celula):
         return ""
 
 
+def ler_producao_setorial_intervalo(creds, spreadsheet_id, aba_nome, intervalo="C700:D704"):
+    """Lê produção setorial a partir de um intervalo em duas colunas e retorna linhas parseáveis."""
+    try:
+        client = gspread.authorize(creds)
+        planilha = client.open_by_key(spreadsheet_id)
+        aba = planilha.worksheet(aba_nome)
+        rows = aba.get(intervalo)
+    except Exception as e:
+        print(f"[AVISO] Erro ao ler produção setorial em {aba_nome}!{intervalo}: {e}")
+        return ""
+
+    linhas = []
+    for row in rows:
+        if not row:
+            continue
+
+        c = str(row[0]).strip() if len(row) > 0 else ""
+        d = str(row[1]).strip() if len(row) > 1 else ""
+
+        if not c and not d:
+            continue
+
+        qtd_d = parse_int_br(d)
+        if qtd_d is not None and c:
+            setor_txt = c
+            qtd = qtd_d
+        else:
+            qtd_c = parse_int_br(c)
+            if qtd_c is not None and d:
+                setor_txt = d
+                qtd = qtd_c
+            else:
+                continue
+
+        setor_key = mapear_setor_producao(setor_txt)
+        if setor_key in {"SETOR 1", "SETOR 2", "SETOR 3", "SETOR 4"} and qtd > 0:
+            linhas.append(f"Intervalo|{setor_key}|{qtd}")
+
+    return "\n".join(linhas)
+
+
 def parse_int_br(valor):
     """Converte texto numérico BR para inteiro (ex.: 1.234, 1234, 1234,0)."""
     if valor is None:
@@ -116,8 +268,92 @@ def parse_int_br(valor):
         return None
 
 
-def ler_producao_setorial_marco(planilha_prod):
-    """Lê produção setorial de março no intervalo Estoque!C700:D704."""
+def extrair_spreadsheet_id(url_ou_id):
+    """Extrai o ID de planilha a partir de URL ou retorna o valor se já for o ID."""
+    if not url_ou_id:
+        return ""
+    url_ou_id = str(url_ou_id).strip()
+    match = re.search(r"/d/([a-zA-Z0-9_-]+)", url_ou_id)
+    if match:
+        return match.group(1)
+    return url_ou_id
+
+
+def normalizar_texto(valor):
+    """Normaliza texto para comparações tolerantes a acentos e espaços."""
+    if valor is None:
+        return ""
+    texto = unicodedata.normalize("NFKD", str(valor))
+    texto = "".join(ch for ch in texto if not unicodedata.combining(ch))
+    return " ".join(texto.strip().lower().split())
+
+
+def parsear_datas_br(serie):
+    """Converte datas BR de forma estrita, evitando trocas entre dia e mês."""
+    if serie is None:
+        return pd.Series(dtype="datetime64[ns]")
+
+    serie_limpa = serie.astype(str).str.strip()
+    serie_limpa = serie_limpa[serie_limpa != ""]
+    serie_limpa = serie_limpa.str.replace("-", "/", regex=False)
+    serie_limpa = serie_limpa[serie_limpa.str.match(r"^\d{1,3}/\d{1,2}/\d{2,4}$", na=False)]
+
+    if serie_limpa.empty:
+        return pd.Series(dtype="datetime64[ns]")
+
+    datas = []
+    for valor in serie_limpa:
+        texto = str(valor).strip()
+        match = re.match(r"^(\d{1,3})/(\d{1,2})/(\d{2,4})$", texto)
+        if not match:
+            datas.append(pd.NaT)
+            continue
+
+        dia = int(match.group(1))
+        mes = int(match.group(2))
+        ano = int(match.group(3))
+        if len(match.group(3)) == 2:
+            ano += 2000
+
+        if not (1 <= mes <= 12 and 1 <= dia <= 31):
+            datas.append(pd.NaT)
+            continue
+
+        if ano < 2000 or ano > 2100:
+            datas.append(pd.NaT)
+            continue
+
+        try:
+            datas.append(datetime(ano, mes, dia))
+        except ValueError:
+            datas.append(pd.NaT)
+
+    return pd.Series(datas, index=serie_limpa.index, dtype="datetime64[ns]").dropna()
+
+
+def filtrar_datas_por_mes_referencia(datas, referencia_mes):
+    """Limita datas ao mês/ano esperado da aba quando a referência é conhecida."""
+    if datas.empty or not referencia_mes:
+        return datas
+
+    referencia = normalizar_texto(referencia_mes)
+    mes = MESES_SIGLA.get(referencia[:3])
+    ano = None
+
+    if "/" in referencia:
+        parte_ano = referencia.split("/")[-1]
+        if parte_ano.isdigit():
+            ano = 2000 + int(parte_ano) if len(parte_ano) == 2 else int(parte_ano)
+
+    if mes is None or ano is None:
+        return datas
+
+    datas_filtradas = datas[(datas.dt.month == mes) & (datas.dt.year == ano)]
+    return datas_filtradas
+
+
+def ler_producao_setorial_estoque(planilha_prod):
+    """Lê produção setorial do intervalo Estoque!C700:D704."""
     try:
         aba = planilha_prod.worksheet("Estoque")
         rows = aba.get("C700:D704")
@@ -215,14 +451,14 @@ Poste Visor Aéreo 1 cx VL (7,5x300)|SETOR 2|38
 Poste Econômico 1CX VR|SETOR 1|27
 Poste Econômico 2CX VR|SETOR 1|1
 Poste Econômico 3CX VR|SETOR 1|3""",
-    "mar26": "",  # ← Cole aqui quando tiver os dados de Março
-    "abr26": "",  # ← Cole aqui quando tiver os dados de Abril
-    "mai26": "",  # ← Cole aqui quando tiver os dados de Maio
-    "jun26": "",  # ← Cole aqui quando tiver os dados de Junho
-    "jul26": "",  # ← Cole aqui quando tiver os dados de Julho
+    "mar26": """Produção Total|TOTAL|4648""",  # Referência salva; C284 prevalece quando preenchida
+    "abr26": """Produção Total|TOTAL|4004""",  # Referência salva; C284 prevalece quando preenchida
+    "mai26": "",  # Dados de Maio serão carregados automaticamente do Google Sheets
+    "jun26": "",  # Dados de Junho serão carregados automaticamente do Google Sheets
+    "jul26": "",  # Dados de Julho serão carregados automaticamente do Google Sheets
     "ago26": "",  # ← Cole aqui quando tiver os dados de Agosto
-    "set26": "",  # ← Cole aqui quando tiver os dados de Setembro
-    "out26": "",  # ← Cole aqui quando tiver os dados de Outubro
+    "set26": "",  # Dados de Setembro serão carregados automaticamente do Google Sheets
+    "out26": "",  # Dados de Outubro serão carregados automaticamente do Google Sheets
     "nov26": "",  # ← Cole aqui quando tiver os dados de Novembro
     "dez26": "",  # ← Cole aqui quando tiver os dados de Dezembro
 }
@@ -317,14 +553,31 @@ def conectar_planilha(planilha, aba_nome):
     df = df.loc[:, ~df.columns.str.startswith("_vazio")]
     df = df.replace("", pd.NA).dropna(how="all").fillna("")
 
-    # Validação: somente linhas com Colunas A(0), C(2), E(4) e G(6) preenchidas
+    # Mantém apenas linhas com campos essenciais de defeito preenchidos.
+    # Algumas linhas válidas deixam forma/como ocorreu vazios, então não usamos
+    # mais posições fixas como A,C,E,G para não truncar o mês indevidamente.
     cols_list = list(df.columns)
-    required_positions = [0, 2, 4, 6]  # Colunas A, C, E, G
-    valid_positions = [p for p in required_positions if p < len(cols_list)]
-    if valid_positions:
+    cols_normalizadas = {normalizar_texto(col): idx for idx, col in enumerate(cols_list)}
+
+    def buscar_indice(*nomes):
+        for nome in nomes:
+            idx = cols_normalizadas.get(normalizar_texto(nome))
+            if idx is not None:
+                return idx
+        return None
+
+    indices_obrigatorios = [
+        buscar_indice("modelo do poste", "modelo", "produto"),
+        buscar_indice("setor"),
+        buscar_indice("tipo defeito", "tipo de defeito", "tipo de erro", "defeito"),
+        buscar_indice("data não conformidade", "data nao conformidade", "data fabricação", "data fabricacao", "data"),
+    ]
+    indices_obrigatorios = [idx for idx in indices_obrigatorios if idx is not None]
+
+    if indices_obrigatorios:
         mask = df.apply(
-            lambda row: all(str(row.iloc[p]).strip() != "" for p in valid_positions),
-            axis=1
+            lambda row: all(str(row.iloc[idx]).strip() != "" for idx in indices_obrigatorios),
+            axis=1,
         )
     else:
         mask = df.apply(lambda row: sum(1 for v in row if str(v).strip()) >= 3, axis=1)
@@ -346,26 +599,27 @@ def conectar_planilha(planilha, aba_nome):
 # ─── Mapeamento de colunas ────────────────────────────────────────────────────
 
 def mapear_colunas(df):
-    colunas = {col.strip().lower(): col for col in df.columns}
+    colunas = {normalizar_texto(col): col for col in df.columns}
     m = {}
     buscas = {
         "erro": ["tipo defeito", "tipo de defeito", "tipo de erro", "defeito"],
         "setor": ["setor"],
-        "data": ["data não conformidade", "data nao conformidade", "data fabricação", "data fabricacao", "data"],
+        "data": ["data nao conformidade", "data fabricacao", "data"],
         "como_ocorreu": ["como ocorreu ?", "como ocorreu", "como ocorreu?"],
         "produto": ["modelo do poste", "modelo", "produto"],
         "forma": ["nº forma", "n forma", "forma"],
-        "acao": ["ação imediata", "acao imediata"],
-        "responsavel": ["responsável pela ação", "responsavel pela acao", "responsável", "responsavel"],
+        "acao": ["acao imediata"],
+        "responsavel": ["responsavel pela acao", "responsavel"],
         "retrabalho": ["conseguiu retrabalhar? sim ou não", "conseguiu retrabalhar", "retrabalho"],
         "reinspecionado": ["reinspecionado por", "reinspecionado"],
-        "tipo_poste": ["tipo (padrão/comum ou cir / dt)", "tipo padrão", "tipo"],
+        "tipo_poste": ["tipo (padrao/comum ou cir / dt)", "tipo padrao", "tipo"],
         "rnc": ["rnc"],
     }
     for chave, termos in buscas.items():
         for t in termos:
-            if t in colunas:
-                m[chave] = colunas[t]
+            termo = normalizar_texto(t)
+            if termo in colunas:
+                m[chave] = colunas[termo]
                 break
 
     # Fallback por posição — abas com cabeçalhos genéricos ("Coluna N")
@@ -837,8 +1091,8 @@ def construir_resumo_2026(todos_resultados, abas_disponiveis):
         "N - Checagem de todos os itens pré-moldagem",
     ]
 
-    meses_abas = [aba for aba, _ in MESES_2026]
-    meses_labels = [lbl for _, lbl in MESES_2026]
+    meses_abas = [aba for aba, _ in MESES_2026 if aba in abas_disponiveis]
+    meses_labels = [lbl for aba, lbl in MESES_2026 if aba in abas_disponiveis]
 
     resumo = {
         "categorias": [],
@@ -889,6 +1143,117 @@ def construir_resumo_2026(todos_resultados, abas_disponiveis):
     return resumo
 
 
+# ─── Análise de Fissuras em Postes Circulares ──────────────────────────────────
+
+def analisar_fissuras_postes_circulares(todos_resultados, abas_disponiveis, PRODUCAO):
+    """
+    Analisa o impacto de fissuras em postes circulares no índice geral de erros.
+    Retorna estatísticas, tabelas e dados para gráficos.
+    """
+    analise = {
+        "abas": [],
+        "total_fissuras": 0,
+        "fissuras_postes_circulares": 0,
+        "fissuras_outros": 0,
+        "dados_mensais": [],
+        "impacto_geral": None,
+    }
+
+    for aba in abas_disponiveis:
+        if aba not in todos_resultados:
+            continue
+
+        resultado = todos_resultados[aba]
+        df = resultado.get("df", pd.DataFrame())
+        mapeamento = resultado.get("mapeamento", {})
+
+        if df.empty or "erro" not in mapeamento or "tipo_poste" not in mapeamento:
+            continue
+
+        col_erro = mapeamento["erro"]
+        col_tipo_poste = mapeamento["tipo_poste"]
+
+        # Normalizar tipos de erro e postes para comparação
+        df[col_erro] = df[col_erro].astype(str).str.strip().str.lower()
+        df[col_tipo_poste] = df[col_tipo_poste].astype(str).str.strip().str.lower()
+
+        # Filtrar fissuras (palavras-chave: fissura, trinca, fenda, rachadura)
+        keywords_fissura = ["fissura", "trinca", "fenda", "rachadura", "trinca"]
+        mask_fissura = df[col_erro].str.contains("|".join(keywords_fissura), case=False, na=False)
+        df_fissuras = df[mask_fissura]
+
+        if df_fissuras.empty:
+            analise["dados_mensais"].append({
+                "mes": resultado.get("mes", aba),
+                "total_fissuras": 0,
+                "circular_fissuras": 0,
+                "outros_fissuras": 0,
+                "total_erros": resultado.get("total", 0),
+                "pct_fissuras": 0,
+                "pct_circular_fissuras": 0,
+            })
+            continue
+
+        # Dentro das fissuras, separar por tipo de poste
+        mask_circular = df_fissuras[col_tipo_poste].str.contains("circ", case=False, na=False)
+        df_fissuras_circular = df_fissuras[mask_circular]
+        df_fissuras_outros = df_fissuras[~mask_circular]
+
+        total_fissuras = len(df_fissuras)
+        circular_fissuras = len(df_fissuras_circular)
+        outros_fissuras = len(df_fissuras_outros)
+        total_erros = resultado.get("total", 0)
+
+        analise["total_fissuras"] += total_fissuras
+        analise["fissuras_postes_circulares"] += circular_fissuras
+        analise["fissuras_outros"] += outros_fissuras
+
+        pct_fissuras = round(total_fissuras / total_erros * 100, 1) if total_erros > 0 else 0
+        pct_circular = round(circular_fissuras / total_fissuras * 100, 1) if total_fissuras > 0 else 0
+
+        analise["dados_mensais"].append({
+            "mes": resultado.get("mes", aba),
+            "total_fissuras": total_fissuras,
+            "circular_fissuras": circular_fissuras,
+            "outros_fissuras": outros_fissuras,
+            "total_erros": total_erros,
+            "pct_fissuras": pct_fissuras,
+            "pct_circular_fissuras": pct_circular,
+        })
+
+        analise["abas"].append(aba)
+
+    # Calcular impacto geral
+    if analise["abas"]:
+        total_geral_fissuras = analise["total_fissuras"]
+        total_geral_circular = analise["fissuras_postes_circulares"]
+        total_geral_erros = sum(resultado.get("total", 0) for aba in analise["abas"] 
+                                if aba in todos_resultados)
+
+        # Cenários
+        taxa_com_circular = round(total_geral_erros / sum(sum(PRODUCAO.get(aba, {}).values()) 
+                                   for aba in analise["abas"]) * 100, 2) if analise["abas"] else 0
+        taxa_sem_circular = round((total_geral_erros - total_geral_circular) / 
+                                  sum(sum(PRODUCAO.get(aba, {}).values()) 
+                                      for aba in analise["abas"]) * 100, 2) if analise["abas"] else 0
+        
+        reducao_percentual = round((taxa_com_circular - taxa_sem_circular) / taxa_com_circular * 100, 1) \
+                             if taxa_com_circular > 0 else 0
+
+        analise["impacto_geral"] = {
+            "total_fissuras": total_geral_fissuras,
+            "circular_fissuras": total_geral_circular,
+            "outros_fissuras": analise["fissuras_outros"],
+            "total_erros": total_geral_erros,
+            "taxa_com_circular": taxa_com_circular,
+            "taxa_sem_circular": taxa_sem_circular,
+            "reducao_percentual": reducao_percentual,
+            "producao_total": sum(sum(PRODUCAO.get(aba, {}).values()) for aba in analise["abas"]),
+        }
+
+    return analise
+
+
 # ─── HTML helpers ─────────────────────────────────────────────────────────────
 
 def esc(text):
@@ -911,20 +1276,50 @@ def trend_pct_icon(val):
     return '<span class="trend-flat">0%</span>'
 
 
-def bar_html(items, label_col, val_col, colors=None):
+DEFEITO_CORES = [
+    "#2563eb", "#dc2626", "#16a34a", "#d97706", "#7c3aed",
+    "#0891b2", "#be123c", "#4f46e5", "#65a30d", "#c2410c",
+]
+
+
+def cor_por_defeito(defeito, mapa_cores=None):
+    if mapa_cores and defeito in mapa_cores:
+        return mapa_cores[defeito]
+    idx = abs(hash(str(defeito))) % len(DEFEITO_CORES)
+    return DEFEITO_CORES[idx]
+
+
+def montar_mapa_cores_defeitos(*series_defeitos):
+    defeitos = []
+    vistos = set()
+    for serie in series_defeitos:
+        for defeito in serie:
+            if defeito not in vistos:
+                vistos.add(defeito)
+                defeitos.append(defeito)
+    return {defeito: DEFEITO_CORES[idx % len(DEFEITO_CORES)] for idx, defeito in enumerate(defeitos)}
+
+
+def swatch_html(cor):
+    return f'<span class="color-swatch" style="background:{cor};"></span>'
+
+
+def bar_html(items, label_col, val_col, colors=None, color_map=None, limit=10):
     if items.empty:
         return ""
     max_v = items[val_col].max()
     default_colors = ["#3498db", "#e74c3c", "#2ecc71", "#f39c12", "#9b59b6",
                       "#1abc9c", "#e67e22", "#34495e", "#e91e63", "#00bcd4"]
     html_out = '<div class="bar-chart">'
-    for idx, (_, row) in enumerate(items.head(12).iterrows()):
+    for idx, (_, row) in enumerate(items.head(limit).iterrows()):
         pct = (row[val_col] / max_v * 100) if max_v > 0 else 0
-        cor = (colors[idx % len(colors)] if colors else default_colors[idx % len(default_colors)])
+        cor = color_map.get(row[label_col]) if color_map else None
+        if not cor:
+            cor = (colors[idx % len(colors)] if colors else default_colors[idx % len(default_colors)])
         nome = esc(str(row[label_col])[:35])
         html_out += f'''
             <div class="bar-row">
-                <div class="bar-label" title="{esc(row[label_col])}">{nome}</div>
+                <div class="bar-label" title="{esc(row[label_col])}">{swatch_html(cor)}{nome}</div>
                 <div class="bar-track">
                     <div class="bar-fill" style="width:{pct:.1f}%;background:{cor};">{row[val_col]}</div>
                 </div>
@@ -935,7 +1330,7 @@ def bar_html(items, label_col, val_col, colors=None):
 
 # ─── Geração do HTML ─────────────────────────────────────────────────────────
 
-def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, resumo_2025):
+def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, resumo_2025, analise_fissuras=None, ultimas_datas_setores=None):
     agora = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     # Últimos dois meses (usar mesmos meses do comp, não abas_disponiveis)
@@ -954,7 +1349,8 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
         serie_datas = df_atual[col_data].astype(str).str.strip()
         serie_datas = serie_datas[serie_datas != ""]
         if not serie_datas.empty:
-            datas_parseadas = pd.to_datetime(serie_datas, dayfirst=True, errors="coerce")
+            datas_parseadas = parsear_datas_br(serie_datas)
+            datas_parseadas = filtrar_datas_por_mes_referencia(datas_parseadas, atual.get("mes"))
             datas_parseadas = datas_parseadas.dropna()
             if not datas_parseadas.empty:
                 ultima_data_defeitos = datas_parseadas.max().strftime("%d/%m/%y")
@@ -979,10 +1375,16 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
 
     # ── Tabela comparativa de erros (últimos 2 meses) ──
     tab_erros_comp = ""
+    top_erros_comp = pd.DataFrame()
+    mapa_cores_defeitos = {}
     if not comp["erros_comp"].empty:
-        tab_erros_comp = f'<table class="data-table"><thead><tr><th>Tipo de Defeito</th><th>{lbl_ant}</th><th>{lbl_atu}</th><th>Variação</th><th>Var %</th><th>Tendência</th></tr></thead><tbody>'
-        for _, row in comp["erros_comp"].iterrows():
+        top_erros_comp = comp["erros_comp"].head(10).copy()
+        mapa_cores_defeitos = montar_mapa_cores_defeitos(top_erros_comp["Tipo de Erro"].tolist())
+        tab_erros_comp = f'<table class="data-table"><thead><tr><th>Cor</th><th>Tipo de Defeito</th><th>{lbl_ant}</th><th>{lbl_atu}</th><th>Variação</th><th>Var %</th><th>Tendência</th></tr></thead><tbody>'
+        for _, row in top_erros_comp.iterrows():
+            cor = cor_por_defeito(row["Tipo de Erro"], mapa_cores_defeitos)
             tab_erros_comp += f'''<tr>
+                <td>{swatch_html(cor)}</td>
                 <td>{esc(row["Tipo de Erro"])}</td>
                 <td>{row[lbl_ant]}</td><td>{row[lbl_atu]}</td>
                 <td>{trend_icon(row["Variação"])}</td>
@@ -1044,18 +1446,14 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
     # ── Pareto mês atual ──
     pareto_atu_bar = ""
     if not atual["erros_pareto"].empty:
-        cores = []
-        for _, row in atual["erros_pareto"].head(12).iterrows():
-            p = row["% do Total"]
-            cores.append("#e74c3c" if p > 20 else ("#f39c12" if p > 10 else ("#3498db" if p > 5 else "#2ecc71")))
-        pareto_atu_bar = bar_html(atual["erros_pareto"].head(12), "Tipo de Erro", "Frequência", cores)
+        pareto_atu_bar = bar_html(atual["erros_pareto"], "Tipo de Erro", "Frequência", color_map=mapa_cores_defeitos, limit=10)
 
     # ── Pareto mês anterior ──
     aba_ant = comp["aba_ant"]
     anterior = todos_resultados[aba_ant]
     pareto_ant_bar = ""
     if not anterior["erros_pareto"].empty:
-        pareto_ant_bar = bar_html(anterior["erros_pareto"].head(12), "Tipo de Erro", "Frequência")
+        pareto_ant_bar = bar_html(anterior["erros_pareto"], "Tipo de Erro", "Frequência", color_map=mapa_cores_defeitos, limit=10)
 
     # ── Como ocorreu ──
     tab_como_comp = ""
@@ -1113,6 +1511,23 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
                 cross_html += f'<td class="{heat}">{val}</td>'
             cross_html += f'<td><strong>{total_row}</strong></td></tr>'
         cross_html += "</tbody></table></div>"
+
+    # ── Erros por Setor - Comparação Mensal ──
+    html_erros_por_setor = ""
+    for aba in abas_disponiveis:
+        r = todos_resultados[aba]
+        if "cross_erro_setor" in r:
+            cross = r["cross_erro_setor"]
+            if not cross.empty:
+                html_erros_por_setor += f'<h3 style="color:var(--primary); margin-top:30px; margin-bottom:10px;">{r["mes"]}</h3>'
+                html_erros_por_setor += '<div class="table-scroll"><table class="data-table"><thead><tr><th>Setor</th><th>Defeitos</th><th>% do Total</th></tr></thead><tbody>'
+                total_def = cross.sum().sum()
+                for setor in cross.columns:
+                    def_setor = cross[setor].sum()
+                    pct = round(def_setor / total_def * 100, 1) if total_def > 0 else 0
+                    heat = "heat-high" if pct >= 30 else ("heat-med" if pct >= 15 else ("heat-low" if pct > 0 else ""))
+                    html_erros_por_setor += f'<tr><td><strong>{esc(setor)}</strong></td><td>{def_setor}</td><td class="{heat}"><strong>{pct}%</strong></td></tr>'
+                html_erros_por_setor += f'<tr style="font-weight:700;background:#edf2f7"><td>TOTAL</td><td>{total_def}</td><td>100%</td></tr></tbody></table></div>'
 
     # ── Formas ──
     formas_html = ""
@@ -1184,6 +1599,11 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
     meses_str = " → ".join(todos_resultados[a]["mes"] for a in abas_disponiveis)
     prod_badge = f'🏭 Produção {lbl_atu}: {prod_total:,} un.' if prod_total > 0 else ""
 
+    # Badges de últimas datas por setor
+    setores_badges = ""
+    if ultimas_datas_setores:
+        setores_badges = "".join([f'<span class="header-badge">📅 {setor}: {data}</span>' for setor, data in ultimas_datas_setores.items()])
+
     # ── Tabela evolução por tipo de erro (todos os meses) ──
     tab_evolucao_erros = ""
     if len(abas_disponiveis) >= 2:
@@ -1223,13 +1643,277 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
                 tab_evolucao_erros += "</tr>"
             tab_evolucao_erros += '</tbody></table></div>'
 
+    # ── Tabela evolução por FORMAS (todos os meses) ──
+    tab_evolucao_formas = ""
+    if len(abas_disponiveis) >= 1:
+        all_formas = set()
+        for aba in abas_disponiveis:
+            if not todos_resultados[aba]["formas"].empty:
+                all_formas.update(todos_resultados[aba]["formas"]["Nº Forma"].tolist())
+        if all_formas:
+            labels = [todos_resultados[a]["mes"] for a in abas_disponiveis]
+            tab_evolucao_formas = '<div class="table-scroll"><table class="data-table"><thead><tr><th>Nº Forma</th>'
+            for lbl in labels:
+                tab_evolucao_formas += f"<th>{lbl}</th>"
+            tab_evolucao_formas += '<th>Total</th><th>Tendência</th></tr></thead><tbody>'
+            
+            formas_totals = {}
+            for forma in all_formas:
+                total = 0
+                for aba in abas_disponiveis:
+                    df_f = todos_resultados[aba]["formas"]
+                    if not df_f.empty:
+                        m = df_f[df_f["Nº Forma"] == forma]
+                        if not m.empty:
+                            total += int(m["Frequência"].iloc[0])
+                formas_totals[forma] = total
+            
+            formas_ord = sorted(formas_totals.keys(), key=lambda x: formas_totals[x], reverse=True)
+            
+            for forma in formas_ord:
+                vals = []
+                for aba in abas_disponiveis:
+                    df_f = todos_resultados[aba]["formas"]
+                    if not df_f.empty:
+                        m = df_f[df_f["Nº Forma"] == forma]
+                        vals.append(int(m["Frequência"].iloc[0]) if not m.empty else 0)
+                    else:
+                        vals.append(0)
+                tab_evolucao_formas += f"<tr><td>{esc(forma)}</td>"
+                for v in vals:
+                    tab_evolucao_formas += f"<td>{v}</td>"
+                tab_evolucao_formas += f"<td><strong>{formas_totals[forma]}</strong></td>"
+                if len(vals) >= 2:
+                    diff = vals[-1] - vals[-2]
+                    tab_evolucao_formas += f"<td>{trend_icon(diff)}</td>"
+                else:
+                    tab_evolucao_formas += "<td>—</td>"
+                tab_evolucao_formas += "</tr>"
+            tab_evolucao_formas += '</tbody></table></div>'
+
+    # ── Tabela evolução por COMO OCORREU (todos os meses) ──
+    tab_evolucao_como_ocorreu = ""
+    if len(abas_disponiveis) >= 1:
+        all_como = set()
+        for aba in abas_disponiveis:
+            if not todos_resultados[aba]["como_ocorreu"].empty:
+                all_como.update(todos_resultados[aba]["como_ocorreu"]["Como Ocorreu"].tolist())
+        if all_como:
+            labels = [todos_resultados[a]["mes"] for a in abas_disponiveis]
+            tab_evolucao_como_ocorreu = '<div class="table-scroll"><table class="data-table"><thead><tr><th>Como Ocorreu</th>'
+            for lbl in labels:
+                tab_evolucao_como_ocorreu += f"<th>{lbl}</th>"
+            tab_evolucao_como_ocorreu += '<th>Total</th><th>Tendência</th></tr></thead><tbody>'
+            
+            como_totals = {}
+            for como in all_como:
+                total = 0
+                for aba in abas_disponiveis:
+                    df_c = todos_resultados[aba]["como_ocorreu"]
+                    if not df_c.empty:
+                        m = df_c[df_c["Como Ocorreu"] == como]
+                        if not m.empty:
+                            total += int(m["Frequência"].iloc[0])
+                como_totals[como] = total
+            
+            como_ord = sorted(como_totals.keys(), key=lambda x: como_totals[x], reverse=True)
+            
+            for como in como_ord:
+                vals = []
+                for aba in abas_disponiveis:
+                    df_c = todos_resultados[aba]["como_ocorreu"]
+                    if not df_c.empty:
+                        m = df_c[df_c["Como Ocorreu"] == como]
+                        vals.append(int(m["Frequência"].iloc[0]) if not m.empty else 0)
+                    else:
+                        vals.append(0)
+                tab_evolucao_como_ocorreu += f"<tr><td>{esc(como)}</td>"
+                for v in vals:
+                    tab_evolucao_como_ocorreu += f"<td>{v}</td>"
+                tab_evolucao_como_ocorreu += f"<td><strong>{como_totals[como]}</strong></td>"
+                if len(vals) >= 2:
+                    diff = vals[-1] - vals[-2]
+                    tab_evolucao_como_ocorreu += f"<td>{trend_icon(diff)}</td>"
+                else:
+                    tab_evolucao_como_ocorreu += "<td>—</td>"
+                tab_evolucao_como_ocorreu += "</tr>"
+            tab_evolucao_como_ocorreu += '</tbody></table></div>'
+
+    # ── Tabela evolução por SETOR (todos os meses) ──
+    tab_evolucao_setores = ""
+    if len(abas_disponiveis) >= 1:
+        all_setores = set()
+        for aba in abas_disponiveis:
+            if not todos_resultados[aba]["setores"].empty:
+                all_setores.update(todos_resultados[aba]["setores"]["Setor"].tolist())
+        if all_setores:
+            labels = [todos_resultados[a]["mes"] for a in abas_disponiveis]
+            tab_evolucao_setores = '<div class="table-scroll"><table class="data-table"><thead><tr><th>Setor</th>'
+            for lbl in labels:
+                tab_evolucao_setores += f"<th>{lbl}</th>"
+            tab_evolucao_setores += '<th>Total</th><th>Tendência</th></tr></thead><tbody>'
+            
+            setores_totals = {}
+            for setor in all_setores:
+                total = 0
+                for aba in abas_disponiveis:
+                    df_s = todos_resultados[aba]["setores"]
+                    if not df_s.empty:
+                        m = df_s[df_s["Setor"] == setor]
+                        if not m.empty:
+                            total += int(m["Frequência"].iloc[0])
+                setores_totals[setor] = total
+            
+            setores_ord = sorted(setores_totals.keys(), key=lambda x: setores_totals[x], reverse=True)
+            
+            for setor in setores_ord:
+                vals = []
+                for aba in abas_disponiveis:
+                    df_s = todos_resultados[aba]["setores"]
+                    if not df_s.empty:
+                        m = df_s[df_s["Setor"] == setor]
+                        vals.append(int(m["Frequência"].iloc[0]) if not m.empty else 0)
+                    else:
+                        vals.append(0)
+                tab_evolucao_setores += f"<tr><td>{esc(setor)}</td>"
+                for v in vals:
+                    tab_evolucao_setores += f"<td>{v}</td>"
+                tab_evolucao_setores += f"<td><strong>{setores_totals[setor]}</strong></td>"
+                if len(vals) >= 2:
+                    diff = vals[-1] - vals[-2]
+                    tab_evolucao_setores += f"<td>{trend_icon(diff)}</td>"
+                else:
+                    tab_evolucao_setores += "<td>—</td>"
+                tab_evolucao_setores += "</tr>"
+            tab_evolucao_setores += '</tbody></table></div>'
+
+    # ── Evolução e tipos de defeito dos setores 3 e 4 ──
+    html_setores_3_4 = ""
+    setores_alvo = ["SETOR 3", "SETOR 4"]
+    dados_setores = {setor: [] for setor in setores_alvo}
+    tipos_setores = {setor: {} for setor in setores_alvo}
+    labels_setores = [todos_resultados[a]["mes"] for a in abas_disponiveis]
+
+    for aba in abas_disponiveis:
+        r = todos_resultados[aba]
+        cross = r.get("cross_erro_setor", pd.DataFrame())
+        for setor_alvo in setores_alvo:
+            total_mes_setor = 0
+            if not cross.empty:
+                cols_setor = [
+                    col for col in cross.columns
+                    if mapear_setor_producao(col) == setor_alvo
+                ]
+                if cols_setor:
+                    serie_setor = cross[cols_setor].sum(axis=1)
+                    total_mes_setor = int(serie_setor.sum())
+                    for defeito, qtd in serie_setor.items():
+                        qtd = int(qtd)
+                        if qtd > 0 and str(defeito).strip():
+                            tipos_setores[setor_alvo].setdefault(defeito, []).append((r["mes"], qtd))
+            dados_setores[setor_alvo].append(total_mes_setor)
+
+    if any(sum(vals) > 0 for vals in dados_setores.values()):
+        max_val_setor = max(max(vals) for vals in dados_setores.values()) or 1
+        largura_svg = 820
+        altura_svg = 260
+        margem_x = 52
+        margem_y = 30
+        plot_w = largura_svg - (margem_x * 2)
+        plot_h = altura_svg - (margem_y * 2)
+        divisor_x = max(len(labels_setores) - 1, 1)
+
+        def ponto_svg(idx, valor):
+            x = margem_x + (idx / divisor_x * plot_w if divisor_x else plot_w / 2)
+            y = margem_y + plot_h - (valor / max_val_setor * plot_h)
+            return x, y
+
+        linhas_svg = []
+        for setor_alvo, cor in [("SETOR 3", "#2563eb"), ("SETOR 4", "#d97706")]:
+            pontos = [ponto_svg(i, v) for i, v in enumerate(dados_setores[setor_alvo])]
+            points_attr = " ".join(f"{x:.1f},{y:.1f}" for x, y in pontos)
+            linhas_svg.append(f'<polyline points="{points_attr}" fill="none" stroke="{cor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>')
+            for (x, y), valor in zip(pontos, dados_setores[setor_alvo]):
+                linhas_svg.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4.5" fill="{cor}"><title>{setor_alvo}: {valor}</title></circle>')
+                linhas_svg.append(f'<text x="{x:.1f}" y="{y - 9:.1f}" text-anchor="middle" class="svg-value">{valor}</text>')
+
+        labels_svg = []
+        for i, label in enumerate(labels_setores):
+            x, _ = ponto_svg(i, 0)
+            labels_svg.append(f'<text x="{x:.1f}" y="{altura_svg - 6}" text-anchor="middle" class="svg-label">{esc(label)}</text>')
+
+        grid_svg = []
+        for i in range(5):
+            valor = round(max_val_setor * i / 4)
+            y = margem_y + plot_h - (valor / max_val_setor * plot_h)
+            grid_svg.append(f'<line x1="{margem_x}" y1="{y:.1f}" x2="{largura_svg - margem_x}" y2="{y:.1f}" class="svg-grid"/>')
+            grid_svg.append(f'<text x="{margem_x - 10}" y="{y + 4:.1f}" text-anchor="end" class="svg-label">{valor}</text>')
+
+        grafico_setores_3_4 = f'''
+        <div class="sector-chart">
+            <div class="sector-legend">
+                <span>{swatch_html("#2563eb")}SETOR 3</span>
+                <span>{swatch_html("#d97706")}SETOR 4</span>
+            </div>
+            <svg viewBox="0 0 {largura_svg} {altura_svg}" role="img" aria-label="Evolução mensal de erros dos setores 3 e 4">
+                {''.join(grid_svg)}
+                {''.join(linhas_svg)}
+                {''.join(labels_svg)}
+            </svg>
+        </div>'''
+
+        tabelas_tipos_setores = ""
+        for setor_alvo in setores_alvo:
+            tipos = tipos_setores[setor_alvo]
+            totais_tipos = {defeito: sum(qtd for _, qtd in meses) for defeito, meses in tipos.items()}
+            tipos_ord = sorted(totais_tipos.keys(), key=lambda x: totais_tipos[x], reverse=True)
+            totais_mes_setor = dados_setores[setor_alvo]
+            total_setor = sum(totais_mes_setor)
+            tabelas_tipos_setores += f'''
+            <div class="sector-table-block">
+                <div class="sector-table-title">
+                    <h3>{setor_alvo} — Tipos de Defeito</h3>
+                    <span>Total no período: <strong>{total_setor}</strong></span>
+                </div>'''
+            if tipos_ord:
+                tabelas_tipos_setores += '<div class="table-scroll"><table class="data-table sector-detail-table"><thead><tr><th>Tipo de Defeito</th>'
+                for label in labels_setores:
+                    tabelas_tipos_setores += f'<th>{label}</th>'
+                tabelas_tipos_setores += '<th>Total</th><th>% Setor</th><th>Tendência</th></tr></thead><tbody>'
+                for defeito in tipos_ord:
+                    valores_por_mes = dict(tipos[defeito])
+                    vals = [valores_por_mes.get(label, 0) for label in labels_setores]
+                    total_defeito = sum(vals)
+                    pct_setor = round(total_defeito / total_setor * 100, 1) if total_setor > 0 else 0
+                    tabelas_tipos_setores += f'<tr><td class="defect-name">{esc(defeito)}</td>'
+                    for v in vals:
+                        cell_cls = "sector-zero" if v == 0 else ""
+                        tabelas_tipos_setores += f'<td class="{cell_cls}">{v}</td>'
+                    tabelas_tipos_setores += f'<td><strong>{total_defeito}</strong></td>'
+                    tabelas_tipos_setores += f'<td><strong>{pct_setor:.1f}%</strong></td>'
+                    tabelas_tipos_setores += f'<td>{trend_icon(vals[-1] - vals[-2]) if len(vals) >= 2 else "—"}</td></tr>'
+                tabelas_tipos_setores += '<tr class="sector-total-row"><td>Total mensal</td>'
+                for total_mes in totais_mes_setor:
+                    tabelas_tipos_setores += f'<td>{total_mes}</td>'
+                tabelas_tipos_setores += f'<td>{total_setor}</td><td>100%</td><td>—</td></tr>'
+                tabelas_tipos_setores += '</tbody></table></div>'
+            else:
+                tabelas_tipos_setores += '<p class="section-desc">Sem registros para este setor nos meses disponíveis.</p>'
+            tabelas_tipos_setores += '</div>'
+
+        html_setores_3_4 = f'''
+            {grafico_setores_3_4}
+            <div class="sector-tables-stack">
+                {tabelas_tipos_setores}
+            </div>'''
+
     # ── Tabela Resumo 2026 (estilo Resumo da planilha) ──
     resumo_tab1_html = ""
     resumo_tab2_html = ""
     resumo_comp_html = ""
 
     if resumo_2026:
-        meses_lbl = resumo_2026["meses_labels"]  # 12 labels
+        meses_lbl = resumo_2026["meses_labels"]
         meses_abas = resumo_2026["meses_abas"]
 
         # ── Tabela 1: Tipo de Defeito × Meses ──
@@ -1268,7 +1952,7 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
 
         # Totals row
         resumo_tab1_html += '<tr class="resumo-grand-total"><td class="resumo-cat"><strong>TOTAL GERAL</strong></td>'
-        for i in range(12):
+        for i in range(len(meses_lbl)):
             col_sum = sum(c["valores"][i] for c in resumo_2026["categorias"] if c["valores"][i] is not None)
             if any(c["valores"][i] is not None for c in resumo_2026["categorias"]):
                 resumo_tab1_html += f'<td><strong>{col_sum}</strong></td>'
@@ -1322,7 +2006,19 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
             else:
                 cls = "resumo-acima-meta" if v > META_RETRABALHO else "resumo-abaixo-meta"
                 resumo_tab2_html += f'<td class="{cls}"><strong>{v}%</strong></td>'
-        media_pct_2026 = round(sum(valid_pct) / len(valid_pct), 1) if valid_pct else 0
+
+        pares_validos = [
+            (ret, prod)
+            for ret, prod in zip(ret_m, prod_m)
+            if ret is not None and prod is not None and prod > 0
+        ]
+        if pares_validos:
+            total_defeitos = sum(ret for ret, _ in pares_validos)
+            total_producao = sum(prod for _, prod in pares_validos)
+            media_pct_2026 = round(total_defeitos / total_producao * 100, 1) if total_producao > 0 else 0
+        else:
+            media_pct_2026 = 0
+
         media_cls_2026 = "resumo-acima-meta" if media_pct_2026 > META_RETRABALHO else "resumo-abaixo-meta"
         media_cls_2025 = "resumo-acima-meta" if MEDIA_2025 > META_RETRABALHO else "resumo-abaixo-meta"
         media_cls_2024 = "resumo-acima-meta" if MEDIA_2024 > META_RETRABALHO else "resumo-abaixo-meta"
@@ -1332,7 +2028,7 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
 
         # Row: Meta
         resumo_tab2_html += '<tr class="resumo-meta-row"><td class="resumo-cat"><strong>Meta</strong></td>'
-        for _ in range(12):
+        for _ in range(len(meses_lbl)):
             resumo_tab2_html += f'<td>{META_RETRABALHO}%</td>'
         resumo_tab2_html += f'<td>{META_RETRABALHO}%</td><td>{META_RETRABALHO}%</td><td>{META_RETRABALHO}%</td></tr>'
         resumo_tab2_html += '</tbody></table></div>'
@@ -1342,7 +2038,7 @@ def gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, re
             ultimo_pct = valid_pct[-1]
             # Find which month is the latest
             ultimo_idx = None
-            for i in range(11, -1, -1):
+            for i in range(len(pct_m) - 1, -1, -1):
                 if pct_m[i] is not None:
                     ultimo_idx = i
                     break
@@ -1438,6 +2134,8 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
 .bar-row {{ display:flex; align-items:center; gap:8px; }}
 .bar-label {{ min-width:180px; max-width:180px; font-size:0.82em; text-align:right; overflow:hidden;
     text-overflow:ellipsis; white-space:nowrap; color:var(--secondary); }}
+.color-swatch {{ display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:7px; vertical-align:-1px;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.14); }}
 .bar-track {{ flex:1; background:#edf2f7; border-radius:6px; height:28px; overflow:hidden; }}
 .bar-fill {{ height:100%; border-radius:6px; display:flex; align-items:center; padding:0 8px;
     color:#fff; font-size:0.78em; font-weight:600; white-space:nowrap; min-width:fit-content; }}
@@ -1476,6 +2174,21 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
 .cross-table td {{ padding:6px; font-size:0.82em; text-align:center; }}
 .comp-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }}
 @media (max-width:900px) {{ .comp-grid {{ grid-template-columns:1fr; }} }}
+.sector-chart {{ margin:10px 0 18px; border:1px solid var(--border); border-radius:8px; padding:14px; background:#fbfdff; }}
+.sector-chart svg {{ width:100%; height:auto; display:block; }}
+.sector-legend {{ display:flex; gap:18px; flex-wrap:wrap; margin-bottom:8px; font-size:0.9em; font-weight:600; color:var(--secondary); }}
+.svg-grid {{ stroke:#e2e8f0; stroke-width:1; }}
+.svg-label {{ fill:#718096; font-size:12px; }}
+.svg-value {{ fill:#2d3748; font-size:12px; font-weight:700; }}
+.sector-tables-stack {{ display:flex; flex-direction:column; gap:18px; }}
+.sector-table-block {{ border:1px solid var(--border); border-radius:8px; padding:14px; background:#fff; }}
+.sector-table-title {{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px; }}
+.sector-table-title h3 {{ color:var(--primary); margin:0; font-size:1em; }}
+.sector-table-title span {{ color:var(--text-light); font-size:0.88em; }}
+.sector-detail-table td.defect-name {{ text-align:left; min-width:260px; font-weight:600; color:var(--secondary); }}
+.sector-detail-table th:first-child {{ text-align:left; }}
+.sector-detail-table .sector-zero {{ color:#a0aec0; background:#f8fafc; }}
+.sector-total-row {{ font-weight:700; background:#edf2f7; }}
 
 /* Resumo tables */
 .resumo-table {{ width:100%; border-collapse:collapse; margin-top:12px; font-size:0.82em; }}
@@ -1524,6 +2237,7 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
         <span class="header-badge">🗓️ Última atualização da lista: {ultima_data_defeitos}</span>
         <span class="header-badge">📊 {meses_str}</span>
         {"<span class='header-badge'>" + prod_badge + "</span>" if prod_badge else ""}
+        {setores_badges}
         <span class="header-badge">🛩️ Análise de Wald</span>
     </div>
 </div>
@@ -1599,10 +2313,42 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
     {tab_evolucao_erros}
 </section>"""}
 
+<!-- Evolução por Setor (Todos os Meses) -->
+{"" if not tab_evolucao_setores else f"""
+<section class="report-section">
+    <h2>📍 Erros por Setor — Evolução desde Janeiro</h2>
+    <p class="section-desc">Histórico completo de defeitos por setor em todos os meses disponíveis, facilitando a visualização da evolução.</p>
+    {tab_evolucao_setores}
+</section>"""}
+
+<!-- Setores 3 e 4 -->
+{"" if not html_setores_3_4 else f"""
+<section class="report-section">
+    <h2>📍 Setores 3 e 4 — Evolução e Tipos de Defeito</h2>
+    <p class="section-desc">Gráfico mensal exclusivo dos setores 3 e 4, com tabelas separadas por tipo de defeito.</p>
+    {html_setores_3_4}
+</section>"""}
+
+<!-- Evolução de Como Ocorreu (Todos os Meses) -->
+{"" if not tab_evolucao_como_ocorreu else f"""
+<section class="report-section">
+    <h2>❓ Como os Defeitos Ocorreram — Evolução desde Janeiro</h2>
+    <p class="section-desc">Evolução detalhada das causas/como os defeitos ocorreram ao longo dos meses.</p>
+    {tab_evolucao_como_ocorreu}
+</section>"""}
+
+<!-- Evolução de Formas (Todos os Meses) -->
+{"" if not tab_evolucao_formas else f"""
+<section class="report-section">
+    <h2>🔩 Top Formas com Defeitos — Evolução desde Janeiro</h2>
+    <p class="section-desc">Ranking das formas com mais defeitos no ano, com acompanhamento mês a mês.</p>
+    {tab_evolucao_formas}
+</section>"""}
+
 <!-- Comparativo de Erros (2 últimos) -->
 <section class="report-section">
     <h2>📊 Comparativo de Defeitos — {lbl_ant} vs {lbl_atu}</h2>
-    <p class="section-desc">Evolução entre os dois últimos meses. Setas vermelhas indicam piora, verdes indicam melhora.</p>
+    <p class="section-desc">Top 10 maiores defeitos por ocorrência em {lbl_atu}. Cada defeito mantém a mesma cor nos gráficos e na tabela.</p>
     <div class="comp-grid">
         <div><h3 style="color:var(--text-light);margin-bottom:10px;">{lbl_ant}</h3>{pareto_ant_bar}</div>
         <div><h3 style="color:var(--text-light);margin-bottom:10px;">{lbl_atu}</h3>{pareto_atu_bar}</div>
@@ -1643,6 +2389,13 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
     {cross_html}
 </section>
 
+<!-- Erros por Setor - Comparação Mensal -->
+<section class="report-section">
+    <h2>📍 Erros por Setor — Comparação Mensal</h2>
+    <p class="section-desc">Distribuição dos defeitos por setor para cada mês disponível. Permite identificar setores com maior concentração de problemas ao longo do tempo.</p>
+    {html_erros_por_setor}
+</section>
+
 <!-- Como Ocorreu -->
 {"" if not tab_como_comp else f"""
 <section class="report-section">
@@ -1670,6 +2423,106 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
     <p class="section-desc">Plano completo para os <strong>2 principais defeitos</strong> de {lbl_atu}. DMAIC detalhado + Análise de Viés de Sobrevivência.</p>
     {html_planos}
 </section>
+
+<!-- Análise de Fissuras em Postes Circulares -->
+{f"""
+<section class="report-section">
+    <h2>🔍 Análise Especial — Impacto de Fissuras em Postes Circulares</h2>
+    <p class="section-desc">Análise detalhada do impacto de fissuras em postes circulares no índice geral de erros.</p>
+    
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-value" style="color:#2d3748">{analise_fissuras['impacto_geral']['total_fissuras']}</div>
+            <div class="kpi-label">Total de Fissuras (ano)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-value" style="color:#e53e3e">{analise_fissuras['impacto_geral']['circular_fissuras']}</div>
+            <div class="kpi-label">Fissuras em Postes Circulares</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-value">{analise_fissuras['impacto_geral']['outros_fissuras']}</div>
+            <div class="kpi-label">Fissuras em Outros Tipos</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-value">{round(analise_fissuras['impacto_geral']['circular_fissuras'] / analise_fissuras['impacto_geral']['total_fissuras'] * 100, 1)}%</div>
+            <div class="kpi-label">% de Fissuras em Circulares</div>
+        </div>
+    </div>
+    
+    <h3 style="color:var(--primary); margin-top:25px; margin-bottom:15px;">📊 Cenários de Taxa de Defeito</h3>
+    
+    <div class="comp-grid">
+        <div style="background:#fee; border-radius:10px; padding:20px; border-left:4px solid #e53e3e;">
+            <div style="font-size:1.8em; font-weight:bold; color:#e53e3e; text-align:center;">
+                {analise_fissuras['impacto_geral']['taxa_com_circular']}%
+            </div>
+            <div style="text-align:center; color:#744210; margin-top:8px; font-size:0.9em;">
+                <strong>Taxa Atual (COM Fissuras Circulares)</strong><br>
+                {analise_fissuras['impacto_geral']['total_erros']} erros / {analise_fissuras['impacto_geral']['producao_total']:,} un.
+            </div>
+        </div>
+        
+        <div style="background:#efe; border-radius:10px; padding:20px; border-left:4px solid #38a169;">
+            <div style="font-size:1.8em; font-weight:bold; color:#38a169; text-align:center;">
+                {analise_fissuras['impacto_geral']['taxa_sem_circular']}%
+            </div>
+            <div style="text-align:center; color:#22543d; margin-top:8px; font-size:0.9em;">
+                <strong>Taxa HIPOTÉTICA (SEM Fissuras Circulares)</strong><br>
+                {analise_fissuras['impacto_geral']['total_erros'] - analise_fissuras['impacto_geral']['circular_fissuras']} erros / {analise_fissuras['impacto_geral']['producao_total']:,} un.
+            </div>
+        </div>
+    </div>
+    
+    <div style="background:#f6e05e; border-left:4px solid #975a16; padding:15px; border-radius:8px; margin-top:20px;">
+        <strong style="color:#975a16; font-size:1.1em;">💡 Conclusão</strong>
+        <p style="color:#744210; margin-top:8px; line-height:1.6;">
+            Se eliminássemos as fissuras em postes <strong>circulares</strong>, a taxa de defeito reduziria de <strong>{analise_fissuras['impacto_geral']['taxa_com_circular']}%</strong> para <strong>{analise_fissuras['impacto_geral']['taxa_sem_circular']}%</strong>,
+            representando uma <strong>redução de {analise_fissuras['impacto_geral']['reducao_percentual']}%</strong> no índice geral de erros. 
+            Fissuras em postes circulares são responsáveis por <strong>{round(analise_fissuras['impacto_geral']['circular_fissuras'] / analise_fissuras['impacto_geral']['total_erros'] * 100, 1)}%</strong> de TODOS os erros do ano.
+        </p>
+    </div>
+    
+    <h3 style="color:var(--primary); margin-top:25px; margin-bottom:15px;">📈 Evolução Mensal de Fissuras</h3>
+    
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Total Fissuras</th>
+                    <th>Circulares</th>
+                    <th>Outros Tipos</th>
+                    <th>% de Circulares</th>
+                    <th>% Fissuras/Total Erros</th>
+                    <th>Total Erros</th>
+                </tr>
+            </thead>
+            <tbody>
+                {"".join([f'''<tr>
+                    <td><strong>{d["mes"]}</strong></td>
+                    <td>{d["total_fissuras"]}</td>
+                    <td style="background:#ffcccc;"><strong>{d["circular_fissuras"]}</strong></td>
+                    <td>{d["outros_fissuras"]}</td>
+                    <td>{d["pct_circular_fissuras"]}%</td>
+                    <td style="background:#fff9e6;">{d["pct_fissuras"]}%</td>
+                    <td>{d["total_erros"]}</td>
+                </tr>''' for d in analise_fissuras['dados_mensais']])}
+            </tbody>
+        </table>
+    </div>
+    
+    <h3 style="color:var(--primary); margin-top:25px; margin-bottom:15px;">🎯 Recomendações Estratégicas</h3>
+    
+    <div style="background:#f0f9ff; border:1px solid #3182ce; border-radius:8px; padding:15px; margin-top:12px;">
+        <ul style="color:#2c5282; line-height:1.8; padding-left:20px;">
+            <li><strong>Prioridade 1:</strong> Investigar a causa raiz de fissuras em postes circulares (processo de vibração/cura/desmoldagem)</li>
+            <li><strong>Prioridade 2:</strong> Análise comparativa do processo entre formas que produzem circulares vs. padronizadas</li>
+            <li><strong>Prioridade 3:</strong> Se {analise_fissuras['impacto_geral']['reducao_percentual']}% de redução for alcançada, seria ganho de {analise_fissuras['impacto_geral']['circular_fissuras']} unidades livres de defeito por ano</li>
+            <li><strong>Ação Rápida:</strong> Validar se as fissuras em circulares são estruturais (impactam durabilidade) ou apenas superficiais (impactam estética)</li>
+        </ul>
+    </div>
+</section>
+""" if analise_fissuras and analise_fissuras.get('impacto_geral') else ""}
 
 <!-- Wald Geral -->
 <section class="report-section">
@@ -1707,6 +2560,68 @@ body {{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color
     return html
 
 
+# ─── Calcular últimas datas de atualização por setor ─────────────────────────
+
+def calcular_ultimas_datas_setores(todos_resultados, abas_disponiveis):
+    """Calcula a última data de entrada de defeitos para cada setor."""
+    setores_ultimas_datas = {"SETOR 1": None, "SETOR 2": None, "SETOR 3": None, "SETOR 4": None}
+    
+    # Mapeamento dos nomes dos setores na planilha de defeitos para os setores padrão
+    mapa_setores_defeitos = {
+        "montagem 1": "SETOR 1",
+        "montagem 2": "SETOR 2", 
+        "setor 3": "SETOR 3",
+        "setor 4": "SETOR 4"
+    }
+    
+    for aba in abas_disponiveis:
+        resultado = todos_resultados[aba]
+        df = resultado.get("df", pd.DataFrame())
+        mapa = resultado.get("mapeamento", {})
+        
+        if df.empty or "setor" not in mapa or "data" not in mapa:
+            continue
+        
+        col_setor = mapa["setor"]
+        col_data = mapa["data"]
+        
+        # Filtrar linhas com setor e data válidos
+        df_filtrado = df[df[col_setor].notna() & (df[col_setor] != "") & df[col_data].notna() & (df[col_data] != "")]
+        
+        if df_filtrado.empty:
+            continue
+        
+        # Parsear datas e manter apenas datas do mês/ano correto
+        datas_parseadas = parsear_datas_br(df_filtrado[col_data])
+        datas_parseadas = filtrar_datas_por_mes_referencia(datas_parseadas, resultado.get("mes"))
+        datas_parseadas = datas_parseadas.dropna()
+        if datas_parseadas.empty:
+            continue
+        
+        # Para cada linha, mapear o setor e atualizar a data máxima
+        for idx, row in df_filtrado.iterrows():
+            setor_raw = str(row[col_setor]).strip().lower()
+            setor_padrao = None
+            for key, value in mapa_setores_defeitos.items():
+                if key in setor_raw:
+                    setor_padrao = value
+                    break
+            
+            if setor_padrao and idx in datas_parseadas.index:
+                data_atual = datas_parseadas.loc[idx]
+                if setores_ultimas_datas[setor_padrao] is None or data_atual > setores_ultimas_datas[setor_padrao]:
+                    setores_ultimas_datas[setor_padrao] = data_atual
+    
+    # Formatar datas
+    for setor in setores_ultimas_datas:
+        if setores_ultimas_datas[setor] is not None:
+            setores_ultimas_datas[setor] = setores_ultimas_datas[setor].strftime("%d/%m/%y")
+        else:
+            setores_ultimas_datas[setor] = "N/D"
+    
+    return setores_ultimas_datas
+
+
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -1732,23 +2647,47 @@ def main():
     client_def = gspread.authorize(creds)
     planilha = client_def.open_by_key(SPREADSHEET_ID_DEFEITOS)
 
-    # Ler produção de Março por setor em Estoque!C700:D704
-    print("[INFO] Lendo produção setorial de Março (Estoque!C700:D704)...")
-    producao_marco_setorial = ler_producao_setorial_marco(planilha_prod)
-
-    if producao_marco_setorial:
-        linhas_marco = [f"Produção Setorial|{setor}|{qtd}" for setor, qtd in producao_marco_setorial.items()]
-        PRODUCAO_RAW["mar26"] = "\n".join(linhas_marco)
-        print(f"[INFO] Produção Março por setor carregada: {producao_marco_setorial}")
-    else:
-        # Fallback: total em Estoque!C278
-        print("[AVISO] Sem dados setoriais válidos em C700:D704. Tentando total em C278...")
-        producao_marco_str = ler_producao_sheets(creds, SPREADSHEET_ID, "Estoque", "C278")
-        if producao_marco_str:
-            PRODUCAO_RAW["mar26"] = producao_marco_str
-            print(f"[INFO] Produção Março total carregada (C278): {producao_marco_str}")
+    # A produção por setor é lida preferencialmente do intervalo de produção, e a célula total serve como fallback.
+    fontes_producao = [
+        ("mar26", "Março", SPREADSHEET_ID_MARCO, "Estoque", "C284", "C700:D704"),
+        ("abr26", "Abril", SPREADSHEET_ID, "Estoque", "C284", "C700:D704"),
+        ("mai26", "Maio", SPREADSHEET_ID_MAIO, "Estoque", "C284", "C700:D704"),
+        ("jun26", "Junho", SPREADSHEET_ID_JUNHO, "Estoque", "C284", "C700:D704"),
+        # Julho e agosto usam C285 como total oficial informado pela operacao.
+        ("jul26", "Julho", SPREADSHEET_ID_JULHO, "17 - Estoque", "C285", None),
+        ("ago26", "Agosto", SPREADSHEET_ID_AGOSTO, "17 - Estoque", "C285", None),
+        # Setembro: layout deslocado 3 linhas; total oficial em C288.
+        ("set26", "Setembro", SPREADSHEET_ID_SETEMBRO, "17 - Estoque", "C288", None),
+        # Outubro: layout deslocado mais 4 linhas; total oficial em C292.
+        ("out26", "Outubro", SPREADSHEET_ID_OUTUBRO, "17 - Estoque", "C292", None),
+    ]
+    for chave_mes, nome_mes, spreadsheet_id, aba_estoque, celula_ref, intervalo_ref in fontes_producao:
+        producao_str = ""
+        if intervalo_ref:
+            print(f"[INFO] Lendo produção setorial de {nome_mes} em {aba_estoque}!{intervalo_ref}...")
+            producao_str = ler_producao_setorial_intervalo(
+                creds, spreadsheet_id, aba_estoque, intervalo_ref
+            )
+        if producao_str:
+            PRODUCAO_RAW[chave_mes] = producao_str
+            print(f"[INFO] Produção {nome_mes} carregada do intervalo {intervalo_ref}: {producao_str}")
         else:
-            print("[AVISO] Nenhum dado de produção encontrado para Março.")
+            if intervalo_ref:
+                print(f"[INFO] Intervalo {intervalo_ref} sem dados; tentando célula {celula_ref}...")
+            else:
+                print(f"[INFO] Lendo total oficial de {nome_mes} em {aba_estoque}!{celula_ref}...")
+            producao_total = ler_producao_sheets(
+                creds, spreadsheet_id, aba_estoque, celula_ref
+            )
+            if producao_total:
+                PRODUCAO_RAW[chave_mes] = producao_total
+                print(f"[INFO] Produção {nome_mes} carregada ({celula_ref}): {producao_total}")
+            else:
+                valor_memoria = PRODUCAO_RAW.get(chave_mes, "")
+                if valor_memoria:
+                    print(f"[AVISO] {nome_mes}!{celula_ref} vazio; usando valor salvo no código: {valor_memoria}")
+                else:
+                    print(f"[AVISO] Nenhum dado de produção encontrado em {nome_mes}!{celula_ref}.")
 
     # Reprocessar PRODUCAO após atualizar PRODUCAO_RAW
     for aba, _ in MESES_2026:
@@ -1760,7 +2699,7 @@ def main():
             print(f"[INFO] Produção {label} por setor: {PRODUCAO[aba]}, total: {total}")
 
     # Listar abas existentes
-    abas_existentes = [ws.title.lower() for ws in planilha.worksheets()]
+    abas_existentes = {ws.title.lower(): ws.title for ws in planilha.worksheets()}
     print(f"[INFO] Abas encontradas na planilha: {len(abas_existentes)}")
 
     # Ler todas as abas disponíveis
@@ -1768,13 +2707,14 @@ def main():
     abas_disponiveis = []
 
     for aba, label in MESES_2026:
-        if aba not in abas_existentes:
+        aba_real = abas_existentes.get(aba)
+        if not aba_real:
             print(f"[SKIP] Aba '{aba}' não existe — mês futuro.")
             continue
 
-        print(f"\n[INFO] Lendo aba '{aba}'...")
+        print(f"\n[INFO] Lendo aba '{aba_real}'...")
         time.sleep(1)  # Delay para respeitar quotas da API
-        df = conectar_planilha(planilha, aba)
+        df = conectar_planilha(planilha, aba_real)
         if df is None or df.empty:
             print(f"[SKIP] Aba '{aba}' vazia ou sem dados válidos.")
             continue
@@ -1829,12 +2769,20 @@ def main():
     print("[INFO] Construindo Resumo 2026...")
     resumo_2026 = construir_resumo_2026(todos_resultados, abas_disponiveis)
 
+    # Análise de Fissuras em Postes Circulares
+    print("[INFO] Analisando fissuras em postes circulares...")
+    analise_fissuras = analisar_fissuras_postes_circulares(todos_resultados, abas_disponiveis, PRODUCAO)
+
+    # Calcular últimas datas de atualização por setor
+    print("[INFO] Calculando últimas datas de atualização por setor...")
+    ultimas_datas_setores = calcular_ultimas_datas_setores(todos_resultados, abas_disponiveis)
+
     # Nome do arquivo
     meses_label = f"{abas_disponiveis[0]}_{abas_disponiveis[-1]}"
     output_file = os.path.join(OUTPUT_DIR, f"relatorio_comparativo_{meses_label}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html")
 
     # Gerar HTML
-    html = gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, resumo_2025)
+    html = gerar_html(todos_resultados, abas_disponiveis, comp, planos, resumo_2026, resumo_2025, analise_fissuras, ultimas_datas_setores)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
@@ -1844,7 +2792,7 @@ def main():
     for aba in abas_disponiveis:
         r = todos_resultados[aba]
         print(f"  {r['mes']}: {r['total']} defeitos")
-    print(f"[INFO] Variação {anterior['mes']}→{atual['mes']}: {comp['variacao_pct']}% ({comp['variacao_total']:+d})")
+    print(f"[INFO] Variação {anterior['mes']}->{atual['mes']}: {comp['variacao_pct']}% ({comp['variacao_total']:+d})")
     prod_total = comp["producao_total"]
     if prod_total > 0:
         print(f"[INFO] Produção {atual['mes']}: {prod_total:,} unidades")
